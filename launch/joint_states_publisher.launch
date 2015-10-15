@@ -1,0 +1,7 @@
+<launch>
+        <node name="joint_states_publisher" pkg="dynamixel_joint_states_publisher" type="joint_states_publisher.py">
+	<remap from="joint_states" to="hexapod/joint_states"/> 	
+	</node>
+
+	
+</launch>
