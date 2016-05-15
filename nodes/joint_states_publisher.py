@@ -7,7 +7,9 @@ from sensor_msgs.msg import *
 class DynamixelJointStatesPublisher:
     def __init__(self):
         self.joint_states_publisher = rospy.Publisher("/joint_states", JointState, queue_size=1)
+        self.goal_states_publisher = rospy.Publisher("/joint_goal_states", JointState, queue_size=1)
         self.join_states = {}
+        self.goal_states = {}
         while not rospy.has_param("joint_names"):
             rospy.sleep(0.01)
         self.joint_names = rospy.get_param("joint_names")
@@ -17,6 +19,7 @@ class DynamixelJointStatesPublisher:
                              velocity=[0.0 for i in xrange(len(self.joint_names))],
                              effort=[0.0 for i in xrange(len(self.joint_names))])
         self.current_stamp = self.js.header.stamp
+        self.gs = self.js
         """ Setup handles """
         for name in self.joint_names:
             rospy.Subscriber("/hexapod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
@@ -30,8 +33,11 @@ class DynamixelJointStatesPublisher:
         self.js.position[idx] = msg.current_pos
         self.js.velocity[idx] = msg.velocity
         self.js.effort[idx] = msg.load
+        self.gs.position[idx] = msg.goal_pos
         self.js.header = Header(stamp=self.current_stamp)
+        self.gs.header = self.js.header
         self.joint_states_publisher.publish(self.js)
+        self.goal_states_publisher.publish(self.gs)
         
 if __name__ == "__main__":
     rospy.init_node("joint_states_publisher")
