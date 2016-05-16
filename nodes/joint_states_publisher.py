@@ -23,6 +23,9 @@ class DynamixelJointStatesPublisher:
         """ Setup handles """
         for name in self.joint_names:
             rospy.Subscriber("/hexapod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
+        
+        self.received = [0 for i in xrange(len(self.joint_names))]
+#         rospy.Timer(rospy.Duration(0.1), self.broadcast, False)
         rospy.spin()
             
     def handle_joint_state(self, msg):
@@ -34,11 +37,21 @@ class DynamixelJointStatesPublisher:
         self.js.velocity[idx] = msg.velocity
         self.js.effort[idx] = msg.load
         self.gs.position[idx] = msg.goal_pos
+        self.gs.velocity[idx] = 0
+        self.gs.effort[idx] = 0
         self.js.header = Header(stamp=self.current_stamp)
         self.gs.header = self.js.header
-        self.joint_states_publisher.publish(self.js)
-        self.goal_states_publisher.publish(self.gs)
+        self.received[idx] = 1
+        if sum(self.received) == 18:
+            self.joint_states_publisher.publish(self.js)
+            self.goal_states_publisher.publish(self.gs) 
+            self.received = [0*i for i in self.received]
+            
         
+    def broadcast(self, event):
+        self.joint_states_publisher.publish(self.js)
+        self.goal_states_publisher.publish(self.gs) 
+           
 if __name__ == "__main__":
     rospy.init_node("joint_states_publisher")
     DynamixelJointStatesPublisher()
