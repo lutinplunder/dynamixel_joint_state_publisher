@@ -32,21 +32,25 @@ class DynamixelJointStatesPublisher:
         if msg.header.stamp.to_sec() > self.current_stamp.to_sec():
             self.current_stamp = msg.header.stamp        
         names = self.join_states.keys()        
-        idx = self.joint_names.index(msg.name)        
+        idx = self.joint_names.index(msg.name)    
+        print '------------------------'
+        print self.js.position[idx]    
         self.js.position[idx] = msg.current_pos
         self.js.velocity[idx] = msg.velocity
         self.js.effort[idx] = msg.load
+        self.js.header = Header(stamp=self.current_stamp)
+        print self.js.position[idx]
         self.gs.position[idx] = msg.goal_pos
         self.gs.velocity[idx] = 0
         self.gs.effort[idx] = 0
-        self.js.header = Header(stamp=self.current_stamp)
         self.gs.header = self.js.header
+        print self.js.position[idx]
         self.received[idx] = 1
         if sum(self.received) == 18:
             self.joint_states_publisher.publish(self.js)
             self.goal_states_publisher.publish(self.gs) 
             self.received = [0*i for i in self.received]
-            
+        print self.js.position[idx]    
         
     def broadcast(self, event):
         self.joint_states_publisher.publish(self.js)
