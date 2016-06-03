@@ -19,7 +19,13 @@ class DynamixelJointStatesPublisher:
                              velocity=[0.0 for i in xrange(len(self.joint_names))],
                              effort=[0.0 for i in xrange(len(self.joint_names))])
         self.current_stamp = self.js.header.stamp
-        self.gs = self.js
+
+        self.gs = JointState(header=Header(stamp=rospy.Time.now()),
+                             name=self.joint_names,
+                             position=[0.0 for i in xrange(len(self.joint_names))],
+                             velocity=[0.0 for i in xrange(len(self.joint_names))],
+                             effort=[0.0 for i in xrange(len(self.joint_names))])
+
         """ Setup handles """
         for name in self.joint_names:
             rospy.Subscriber("/hexapod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
@@ -33,24 +39,24 @@ class DynamixelJointStatesPublisher:
             self.current_stamp = msg.header.stamp        
         names = self.join_states.keys()        
         idx = self.joint_names.index(msg.name)    
-        print '------------------------'
-        print self.js.position[idx]    
+#         if idx == 1: print '------------------------\n'
+#         if idx == 1: print idx,self.js.position[idx]    
         self.js.position[idx] = msg.current_pos
         self.js.velocity[idx] = msg.velocity
         self.js.effort[idx] = msg.load
         self.js.header = Header(stamp=self.current_stamp)
-        print self.js.position[idx]
+#         if idx == 1: print idx,self.js.position[idx]    
         self.gs.position[idx] = msg.goal_pos
         self.gs.velocity[idx] = 0
         self.gs.effort[idx] = 0
         self.gs.header = self.js.header
-        print self.js.position[idx]
+#         if idx == 1: print idx,self.js.position[idx]    
         self.received[idx] = 1
         if sum(self.received) == 18:
             self.joint_states_publisher.publish(self.js)
             self.goal_states_publisher.publish(self.gs) 
             self.received = [0*i for i in self.received]
-        print self.js.position[idx]    
+#         if idx == 1: print idx,self.js.position[idx]    
         
     def broadcast(self, event):
         self.joint_states_publisher.publish(self.js)
