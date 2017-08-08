@@ -28,7 +28,7 @@ class DynamixelJointStatesPublisher:
 
         """ Setup handles """
         for name in self.joint_names:
-            rospy.Subscriber("/hexapod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
+            rospy.Subscriber("/syropod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
         
         self.received = [0 for i in xrange(len(self.joint_names))]
 #         rospy.Timer(rospy.Duration(0.1), self.broadcast, False)
