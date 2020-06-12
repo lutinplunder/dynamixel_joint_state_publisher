@@ -6,7 +6,7 @@ A ROS node written in Python which subscribes to joint state from the dynamixel_
 
 ## Getting Started
 
-If you haven't looked at the tutorials for using Syropod Highlevel Controller, see [SHC Tutorials](https://github.com/csiro-robotics/shc_tutorials).
+If you haven't looked at the tutorials for using OpenSHC, see [OpenSHC Tutorials](https://github.com/csiro-robotics/shc_tutorials).
 
 ### Requirements
 
