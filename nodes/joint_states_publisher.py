@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #######################################################################
 # Copyright (c) 2020
@@ -22,22 +22,22 @@ class DynamixelJointStatesPublisher:
         self.joint_names = rospy.get_param("joint_names")
         self.js = JointState(header=Header(stamp=rospy.Time.now()),
                              name=self.joint_names,
-                             position=[0.0 for i in xrange(len(self.joint_names))],
-                             velocity=[0.0 for i in xrange(len(self.joint_names))],
-                             effort=[0.0 for i in xrange(len(self.joint_names))])
+                             position=[0.0 for i in range(len(self.joint_names))],
+                             velocity=[0.0 for i in range(len(self.joint_names))],
+                             effort=[0.0 for i in range(len(self.joint_names))])
         self.current_stamp = self.js.header.stamp
 
         self.gs = JointState(header=Header(stamp=rospy.Time.now()),
                              name=self.joint_names,
-                             position=[0.0 for i in xrange(len(self.joint_names))],
-                             velocity=[0.0 for i in xrange(len(self.joint_names))],
-                             effort=[0.0 for i in xrange(len(self.joint_names))])
+                             position=[0.0 for i in range(len(self.joint_names))],
+                             velocity=[0.0 for i in range(len(self.joint_names))],
+                             effort=[0.0 for i in range(len(self.joint_names))])
 
         """ Setup handles """
         for name in self.joint_names:
             rospy.Subscriber("/syropod/" + name + "/state", DynamixelJointState, self.handle_joint_state)
         
-        self.received = [0 for i in xrange(len(self.joint_names))]
+        self.received = [0 for i in range(len(self.joint_names))]
 #         rospy.Timer(rospy.Duration(0.1), self.broadcast, False)
         rospy.spin()
             
